@@ -19,7 +19,7 @@ app.get('/edit', (req, res) => {
   }
 
   if (user === null) {
-    const uri = `${req.protocol}://${req.get('host')}${req.originalUrl}`
+    const uri = encodeURIComponent(`${req.protocol}://${req.get('host')}${req.originalUrl}`)s
     const random = randomstring.generate(13)
     const nonce = randomstring.generate(6)
     res.redirect(301, `https://access.line.me/oauth2/v2.1/authorize?response_type=code\
