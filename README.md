@@ -1,6 +1,11 @@
-# linebot-todos
+# Line Bot Todo List
 
 https://github.com/muitsfriday/linebot-todos
+
+
+## QR CODE for Line Bot (add pleaseeee)
+
+![](linebot-qr.png)
 
 
 ## Initiate Line Bot Service (service-message in Go)
@@ -22,3 +27,12 @@ Your server must provide following enviroment variable
 
 ### Deploy on other
 There is a Dockerfile in service-message youcan build it with `docker build -t <your_image_name> .` in service-message directory and deploy it anywhere.
+
+
+### Performance concerning
+Please index the mongo todo collection with field
+- `userId` Todo List query the todo list from userId. There a lot of performance improve with this index.
+
+sorting index
+- `dueDate` the service query order by dueDate asc
+- `important` the service has order important task first
