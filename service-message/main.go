@@ -9,31 +9,25 @@ import (
 	"time"
 
 	"github.com/line/line-bot-sdk-go/linebot"
-	mgo "gopkg.in/mgo.v2"
+	"github.com/muitsfriday/linebot-todos/service-message/repositories"
 )
 
 func main() {
 
-	fmt.Println("enter main")
-	bot, err := linebot.New(os.Getenv("SECRET"), os.Getenv("TOKEN"))
+	repo, err := repositories.NewMongo(os.Getenv("MONGODB_URI"), os.Getenv("TODOS_COLL"))
 	if err != nil {
-		fmt.Println(err)
+		panic("couldn't start server: database connect error " + err.Error())
 	}
 
-	ss := strings.Split(os.Getenv("MONGODB_URI"), "/")
-	dbname := ss[len(ss)-1]
+	defer repo.Close()
 
-	session, errMgo := mgo.Dial(os.Getenv("MONGODB_URI"))
-	if errMgo != nil {
-		fmt.Print(os.Getenv("MONGODB_URI"))
-		panic("end")
+	botClient, err := NewBot(os.Getenv("SECRET"), os.Getenv("TOKEN"))
+	if err != nil {
+		panic("couldn't start server: linebot connect error " + err.Error())
 	}
-	defer session.Close()
-
-	todoColl := session.DB(dbname).C("todos")
 
 	http.HandleFunc("/callback", func(w http.ResponseWriter, req *http.Request) {
-		events, err := bot.ParseRequest(req)
+		events, err := botClient.Client.ParseRequest(req)
 		if err != nil {
 			if err == linebot.ErrInvalidSignature {
 				w.WriteHeader(400)
@@ -51,12 +45,15 @@ func main() {
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
 
-					listitem, err := MessageTranslate(message.Text)
+					if isEditCommand(message.Text) {
+						botClient.SendMessage(event.ReplyToken, os.Getenv("EDIT_URI"))
+						return
+					}
+
+					listitem, err := ParseMessage(message.Text)
 
 					if err != nil {
-						if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(err.Error())).Do(); err != nil {
-							fmt.Println(err)
-						}
+						botClient.SendMessage(event.ReplyToken, err.Error())
 						return
 					}
 
@@ -64,17 +61,13 @@ func main() {
 					listitem.Done = false
 					listitem.Important = false
 
-					insertionErr := todoColl.Insert(&listitem)
+					insertionErr := repo.Insert(&listitem)
 
 					if insertionErr != nil {
-						if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("error inserting task")).Do(); err != nil {
-							fmt.Println(err)
-						}
+						botClient.SendMessage(event.ReplyToken, "Error inserting task to database.")
 					}
 
-					if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("added new task")).Do(); err != nil {
-						fmt.Println(err)
-					}
+					botClient.SendMessage(event.ReplyToken, "New task has added.")
 				}
 			}
 		}
@@ -88,46 +81,71 @@ func main() {
 
 }
 
-// TodoListItem structure
-type TodoListItem struct {
-	ID        int       `bson:"id" json:"id"`
-	Task      string    `bson:"task" json:"task"`
-	DueDate   time.Time `bson:"dueDate" json:"dueDate"`
-	UserID    string    `bson:"userId" json:"userId"`
-	Done      bool      `bson:"done" json:"done"`
-	Important bool      `bson:"important" json:"important"`
-}
+// TODO LIST //
 
-// MessageTranslate transform message string to struct
-func MessageTranslate(message string) (TodoListItem, error) {
+// ParseMessage transform message string to struct
+func ParseMessage(message string) (repositories.TodoListItem, error) {
 	splited := strings.Split(message, " : ")
 
-	fmt.Println(len(splited))
-
 	if len(splited) < 2 {
-		return TodoListItem{}, errors.New("the input must be in format ")
+		return repositories.TodoListItem{}, errors.New("the input must be in format task : date/month/year : time")
 	}
 
-	task := splited[0]
-	date := splited[1]
+	task := strings.Trim(splited[0], " ")
+	date := strings.Trim(splited[1], " ")
+
+	if date == "tomorrow" {
+		date = time.Now().AddDate(0, 0, 1).Format("02/01/06")
+	}
+	if date == "today" {
+		date = time.Now().Format("02/01/06")
+	}
 
 	if len(splited) > 2 {
-		date += " " + splited[2]
+		date += " " + strings.Trim(splited[2], " ")
 	} else {
 		date += " " + "12:00"
 	}
 
 	//loc := time.FixedZone("UTC+7", +7*60*60)
-	parsedTime, err := time.Parse("01/02/06 03:04", date)
-
-	fmt.Println(parsedTime)
+	parsedTime, err := time.Parse("02/01/06 15:04", date)
 
 	if err != nil {
-		return TodoListItem{}, errors.New("cannot parse time string")
+		fmt.Println("error: ", err.Error())
+		return repositories.TodoListItem{}, errors.New("cannot parse time string")
 	}
 
-	return TodoListItem{
+	return repositories.TodoListItem{
 		Task:    task,
 		DueDate: parsedTime,
 	}, nil
+}
+
+func isEditCommand(command string) bool {
+	return strings.Trim(strings.ToLower(command), " ") == "edit"
+}
+
+// BOT ZONE ====================================================================================================
+// =============================================================================================================
+
+// Bot struct holder
+type Bot struct {
+	Client *linebot.Client
+}
+
+// NewBot create new bot holder
+func NewBot(secret string, token string) (*Bot, error) {
+	bot, err := linebot.New(secret, token)
+	if err != nil {
+		return &Bot{}, err
+	}
+
+	return &Bot{Client: bot}, nil
+}
+
+// SendMessage send message to client
+func (b *Bot) SendMessage(replyToken string, message string) error {
+	msg := linebot.NewTextMessage(message)
+	_, err := b.Client.ReplyMessage(replyToken, msg).Do()
+	return err
 }

@@ -8,18 +8,23 @@ COPY ./.babelrc ./
 COPY ./.eslintrc.js ./
 COPY ./.eslintignore ./
 COPY ./src ./src
+COPY ./view ./view
 
 RUN yarn install
 RUN yarn build
-CMD ["node", "lib/index.js"]
+#CMD ["node", "lib/index.js"]
 
 ## stage 2
 
-#FROM node:8.15.0-alpine
+FROM node:8.15.0-alpine
 
-#WORKDIR /usr/src/app
+WORKDIR /usr/src/app
 
-#COPY --from=builder /usr/src/app/lib .
+COPY --from=builder /usr/src/app/lib .
+COPY --from=builder /usr/src/app/view ./view
+COPY ./package.json ./
+
+RUN yarn install --production=true
 #COPY --from=builder ./.env .
 
-#CMD ["node", "index.js"]
+CMD ["node", "index.js"]

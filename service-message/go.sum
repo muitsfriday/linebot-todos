@@ -2,5 +2,7 @@ github.com/Knetic/govaluate v3.0.0+incompatible h1:7o6+MAPhYTCF0+fdvoz1xDedhRb4f
 github.com/Knetic/govaluate v3.0.0+incompatible/go.mod h1:r7JcOSlj0wfOMncg0iLm8Leh48TZaKVeNIfJntJ2wa0=
 github.com/line/line-bot-sdk-go v4.2.0+incompatible h1:gZzs9yzK7w8sFhiIyEz2S4k0J8Ap9fYydTal0YWqX0o=
 github.com/line/line-bot-sdk-go v4.2.0+incompatible/go.mod h1:0RjLjJEAU/3GIcHkC3av6O4jInAbt25nnZVmOFUgDBg=
+github.com/muitsfriday/linebot-todos v0.0.0-20190111165753-f2bfac798bd1 h1:2UBCYk/mFfgil2Ys4OIYm8z2QTTyit87dAq7Ec3PstU=
+github.com/muitsfriday/linebot-todos/service-message v0.0.0-20190111165753-f2bfac798bd1 h1:57vZXawxcnLqIjBMYdaNXN5zooj72tG0hp90NRBAt2g=
 gopkg.in/mgo.v2 v2.0.0-20180705113604-9856a29383ce h1:xcEWjVhvbDy+nHP67nPDDpbYrY+ILlfndk4bRioVHaU=
 gopkg.in/mgo.v2 v2.0.0-20180705113604-9856a29383ce/go.mod h1:yeKp02qBN3iKW1OzL3MGk2IdtZzaj7SFntXj72NppTA=

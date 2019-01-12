@@ -1,4 +1,4 @@
-module service-message
+module github.com/muitsfriday/linebot-todos/service-message
 
 require (
 	github.com/Knetic/govaluate v3.0.0+incompatible
