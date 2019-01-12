@@ -92,7 +92,7 @@ func ParseMessage(message string) (repositories.TodoListItem, error) {
 	}
 
 	task := strings.Trim(splited[0], " ")
-	date := strings.Trim(splited[1], " ")
+	date := strings.ToLower(strings.Trim(splited[1], " "))
 
 	if date == "tomorrow" {
 		date = time.Now().AddDate(0, 0, 1).Format("02/01/06")
@@ -111,7 +111,6 @@ func ParseMessage(message string) (repositories.TodoListItem, error) {
 	parsedTime, err := time.Parse("02/01/06 15:04", date)
 
 	if err != nil {
-		fmt.Println("error: ", err.Error())
 		return repositories.TodoListItem{}, errors.New("cannot parse time string")
 	}
 
