@@ -118,4 +118,6 @@ export {
   toggleDone,
   toggleImportant,
   loadMore,
+  sortList,
+  keyBy,
 }

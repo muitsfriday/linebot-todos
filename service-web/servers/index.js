@@ -24,17 +24,18 @@ app.use(userJWT)
 app.set('views', path.join(__dirname, '..', 'view'))
 app.set('view engine', 'pug')
 
+// Test Web
 app.get('/', (req, res) => {
-  res.send('Hello World 3')
+  res.send('Hello Linebot')
 })
 
+// List user's todo list.
 app.get('/list', async (req, res) => {
   if (!req.user) {
     return res.json({
       error: 'no user specified.',
     })
   }
-  console.log('oooo', req.query.page, parseInt(req.query.page, 10) || 1)
   const userId = req.user.sub
   const result = await getTodosByUserId(userId, parseInt(req.query.page, 10) || 1)
 
@@ -48,6 +49,7 @@ app.get('/list', async (req, res) => {
   return res.json(jsonResult)
 })
 
+// change done status api.
 app.post('/done', async (req, res) => {
   if (!req.user) {
     return res.json({
@@ -61,6 +63,7 @@ app.post('/done', async (req, res) => {
   return res.json(result)
 })
 
+// change important status api.
 app.post('/important', async (req, res) => {
   if (!req.user) {
     return res.json({
@@ -74,6 +77,7 @@ app.post('/important', async (req, res) => {
   return res.json(result)
 })
 
+// edit page
 app.get('/edit', async (req, res) => {
   const secret = process.env.LINE_SECRET
   const redirect = `${process.env.BASE_URI}/edit`
@@ -98,18 +102,16 @@ app.get('/edit', async (req, res) => {
 
     if (typeof idToken !== 'undefined') {
       userInfo = getTokenInfo(idToken, secret)
+      res.cookie('jwt', idToken, {
+        httpOnly: true,
+        secure: true,
+      })
+      req.token = idToken
     }
 
     if (userInfo === false && !req.token) {
       return res.send('cannot verify token info')
     }
-
-    req.token = idToken
-
-    res.cookie('jwt', idToken, {
-      httpOnly: true,
-      secure: true,
-    })
   }
 
   if (req.user) {

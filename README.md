@@ -37,6 +37,9 @@ sorting index
 - `dueDate` the service query order by dueDate asc
 - `important` the service has order important task first
 
+### Tests
+run command `go test`
+
 ---
 
 ## Initiate Webview Service (service-web in node.js)
@@ -57,6 +60,12 @@ Pages  `/edit` is webview editor of todo list app. This force user to login with
 
 ![](webexample.png)
 
+
+### react app for render frontend
+
+Todo list app front end made from react. See src in servcie-web folder. This bundled with Webpack into dist directory and called by `/edit` page
+
+
 ### Enviroment variable setup
 
 - BASE_URI specify the uri of web service eg. https://aaa.heroku.com/
@@ -73,3 +82,12 @@ Pages  `/edit` is webview editor of todo list app. This force user to login with
 ### Deploy on other
 There is a Dockerfile in service-web you can build it with `docker build -t <your_image_name> .` in service-message directory and deploy it anywhere.
 
+### Tests
+
+run `yarn test`
+The test useing mocha.
+
+
+---
+## Cron job for sending message
+not implement yet :(

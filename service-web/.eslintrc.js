@@ -7,7 +7,8 @@ module.exports = {
         }
     },
     "plugins": [
-        "react"
+        "react",
+        'jest',
     ],
     "rules": {
         "semi": ["error", "never"],

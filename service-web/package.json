@@ -7,6 +7,7 @@
     "@babel/plugin-transform-runtime": "^7.2.0",
     "@babel/preset-env": "^7.2.3",
     "@babel/preset-react": "^7.0.0",
+    "@babel/register": "^7.0.0",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.5",
     "chai": "^4.2.0",
@@ -16,12 +17,15 @@
     "eslint-loader": "^2.1.1",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-react": "^7.12.3",
+    "jest": "^21.3.0-beta.15",
     "mocha": "^5.2.0",
     "nodemon": "^1.18.9",
     "webpack": "^4.28.4",
     "webpack-cli": "^3.2.1"
   },
   "scripts": {
+    "test": "./node_modules/.bin/mocha --compilers js:@babel/register",
+    "coverage": "jest --collectCoverageFrom=src/**.js --coverage src",
     "lint": "./node_modules/.bin/eslint ./servers/**.js",
     "dev:files": "nodemon --exec 'yarn lint && babel-node ./src/example-files.js'",
     "server": "nodemon --exec 'yarn lint && ./node_modules/.bin/babel-node ./servers/index.js'",
