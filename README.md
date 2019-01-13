@@ -18,7 +18,7 @@ You can input command to linebot as folling pattern.
 
 `task : Tomorrow : time`
 
-You can use "edit" to tells linebot to send you editor link. It will open up a webview you can edit todo list. 
+You can use "`edit`" to tells linebot to send you editor link. It will open up a webview you can edit todo list. 
 
 ## Initiate Line Bot Service (service-message in Go)
 
@@ -30,6 +30,7 @@ Your server must provide following enviroment variable
 - TODOS_COLL todo database table/collction name.
 - EDIT_URI url bot use to send when edit command called.
 - PORT port that your want to run (no need to set on Heroku).
+- REDIS_URL Tell service to clear redis's cache when new task has added.
 
 
 ### Deploy on Heroku
@@ -40,14 +41,6 @@ Your server must provide following enviroment variable
 ### Deploy on other
 There is a Dockerfile in service-message you can build it with `docker build -t <your_image_name> .` in service-message directory and deploy it anywhere.
 
-
-### Performance concerning
-Please index the mongo todo collection with field
-- `userId` Todo List query the todo list from userId. There a lot of performance improve with this index.
-
-sorting index
-- `dueDate` the service query order by dueDate asc
-- `important` the service has order important task first
 
 ### Tests
 run command `go test`
@@ -85,6 +78,7 @@ Todo list app front end made from react. See src in servcie-web folder. This bun
 - LINE_SECRET Line login client secret
 - MONGODB_URI Mongo DB connection string
 - TODOS_COLL Collection name use for store todo's document
+- REDIS_URL Use for connect to redis. Redis is use for cache the query result.
 
 ### Deploy on Heroku
 - Create new app.
@@ -102,4 +96,23 @@ The test useing mocha.
 
 ---
 ## Cron job for sending message
-not implement yet :(
+not implement yet.
+
+
+---
+
+## Performance Concerning
+
+### Database indexing
+Please index the mongo todo collection with field
+- `userId` Todo List query the todo list from userId. There a lot of performance improve with this index.
+
+sorting index
+- `dueDate` the service query order by dueDate asc
+- `important` the service has order important task first
+
+### Paging
+- This repo set default paging to 3. It can be config on connector/todo.js in service-web
+
+### Cache
+- This code use redis as cache. it clear when user has add/update the todo. This can be improve later.
