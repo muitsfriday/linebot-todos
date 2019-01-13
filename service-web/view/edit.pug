@@ -1,55 +1,19 @@
 html
   head
     title Edit Todos
+    meta(name="viewport", content="width=device-width, initial-scale=1, shrink-to-fit=no")
+    style.
+      .list-group { flex-basis: 100% }
+      .important { color: #ceb241 }
   body
-    div(class='container')
-      div(class='row')
-        div(class='col-sm')
-          h1 Edit Todo
-      div(class='row')
-        div(class='col-sm')    
-          div(class='list-group', id='todo-list')  
+    div(id="react-root")
+    link(rel="stylesheet", href="https://use.fontawesome.com/releases/v5.6.3/css/all.css", integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/", crossorigin="anonymous")
     link(rel="stylesheet", href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css", integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO", crossorigin="anonymous")
-    script(src="https://code.jquery.com/jquery-3.3.1.slim.min.js", integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo", crossorigin="anonymous")
-    script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js", integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49", crossorigin="anonymous")
-    script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js", integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy", crossorigin="anonymous")
     script.
-      var todos = !{todos}
-      console.log(todos)
-      
-      var $todolist = $('#todo-list') 
-
-
-      
-
-      var getItemElement = function (item) {
-        var date = (new Date( Date.parse(item.dueDate)))
-        var dateFormatted = "Due on " + date.getDate() + "/" + (date.getMonth()+1) + "/" + (date.getFullYear()) + " " + (date.getHours()) + ":" + (date.getMinutes())
-        var $date = $('<span>').addClass("date").text(dateFormatted)
-        var $task = $('<span>').addClass("task").text(item.task)
-        var $state = $('<p class="mb-1">state: '+ (done ? 'complated' : 'not complete')+'</p>')
-
-        var itemHTML = '\
-        <div class="d-flex w-100 justify-content-between">\
-          <h5 class="mb-1">'+item.task+'</h5>\
-          <small>'+dateFormatted+'</small>\
-        </div>'
-
-        return $('<li>')
-        .addClass('list-group-item')
-        .attr('key', item._id)
-        .append($(itemHTML))
-        .append($state)
+      var initState = { 
+        todo: { list: !{todos}, page: 1, more: true } ,
+        user: { jwt: '!{token}' }
       }
-
-      var render = function (itemlist) {
-        for(var i in itemlist) {
-          if(!itemlist.hasOwnProperty(i)) {
-            continue
-          }
-
-          $todolist.append(getItemElement(itemlist[i]))
-        }
-      }
-      render(todos)
-
+    script(src="/dist/bundle.js")  
+  
+     

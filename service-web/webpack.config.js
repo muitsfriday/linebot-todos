@@ -30,9 +30,9 @@ var config = {
         exclude: /(node_modules|bower_components)/
       },
       {
-        test: /(\.jsx|\.js)$/,
-        use: "eslint-loader",
-        exclude: /node_modules/
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: ['babel-loader', 'eslint-loader']
       }
     ]
   },
