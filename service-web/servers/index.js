@@ -59,7 +59,7 @@ app.post('/done', async (req, res) => {
 
   const { taskId, flag } = req.body
   const userId = req.user.sub
-  const result = await changeTodoState(userId, taskId, flag)
+  const result = await changeTodoState(userId, taskId, flag !== 'false')
   return res.json(result)
 })
 
@@ -73,7 +73,7 @@ app.post('/important', async (req, res) => {
 
   const { taskId, flag } = req.body
   const userId = req.user.sub
-  const result = await changeImportantState(userId, taskId, flag)
+  const result = await changeImportantState(userId, taskId, flag !== 'false')
   return res.json(result)
 })
 
@@ -107,6 +107,7 @@ app.get('/edit', async (req, res) => {
         secure: true,
       })
       req.token = idToken
+      req.user = userInfo
     }
 
     if (userInfo === false && !req.token) {

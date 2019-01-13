@@ -26,6 +26,8 @@ func main() {
 		panic("couldn't start server: linebot connect error " + err.Error())
 	}
 
+	cache := repositories.ConnectCache()
+
 	http.HandleFunc("/callback", func(w http.ResponseWriter, req *http.Request) {
 		events, err := botClient.Client.ParseRequest(req)
 		if err != nil {
@@ -66,7 +68,7 @@ func main() {
 					if insertionErr != nil {
 						botClient.SendMessage(event.ReplyToken, "Error inserting task to database.")
 					}
-
+					cache.DeleteUserCache(event.Source.UserID)
 					botClient.SendMessage(event.ReplyToken, "New task has added.")
 				}
 			}
@@ -121,7 +123,7 @@ func ParseMessage(message string) (repositories.TodoListItem, error) {
 }
 
 func isEditCommand(command string) bool {
-	return strings.Trim(strings.ToLower(command), " ") == "edit"
+	return strings.Trim(strings.ToLower(command), " \n\r") == "edit"
 }
 
 // BOT ZONE ====================================================================================================

@@ -13,6 +13,6 @@ module.exports = {
     "rules": {
         "semi": ["error", "never"],
         "no-console": [0, "allow"],
-        "max-len": [1, 70, 2, {ignoreComments: true}],
+        "max-len": [1, 100, 2, {ignoreComments: true}],
     }
 };
