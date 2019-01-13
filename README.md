@@ -8,6 +8,18 @@ https://github.com/muitsfriday/linebot-todos
 ![](linebot-qr.png)
 
 
+### Linebot command
+
+You can input command to linebot as folling pattern.
+
+`task : date/month/year : time`
+
+`task : today : time`
+
+`task : Tomorrow : time`
+
+You can use "edit" to tells linebot to send you editor link. It will open up a webview you can edit todo list. 
+
 ## Initiate Line Bot Service (service-message in Go)
 
 ### Enviroment variable setup
