@@ -96,8 +96,11 @@ app.get('/edit', async (req, res) => {
 
     idToken = fetchResponse.id_token
 
-    userInfo = getTokenInfo(idToken, secret)
-    if (userInfo === false) {
+    if (typeof idToken !== 'undefined') {
+      userInfo = getTokenInfo(idToken, secret)
+    }
+
+    if (userInfo === false && !req.token) {
       return res.send('cannot verify token info')
     }
 
